@@ -120,19 +120,15 @@ apiRoutes.post('/member', function(req, res) {
 });
 
 //View Member
-apiRoutes.get('/member/:memberId/view', function(req, res) {
+apiRoutes.get('/member/:memberId', function(req, res) {
 
-  if (req.params.memberId == null) {
-    return res.json({ success: false, message: 'View member failed. Cannot retrieve a member without an id.' });
-  } else if (!mongoose.Types.ObjectId.isValid(req.params.memberId)){
+  if (!mongoose.Types.ObjectId.isValid(req.params.memberId)){
     return res.json({ success: false, message: 'View member failed. The id provided is an invalid ObjectId.' });
   } else {
-    if(mongoose.Types.ObjectId.isValid(req.params.memberId)){
-      Member.find({_id: req.params.memberId}, function(err, members){
-        if (err) throw err;
-        return res.json(members);
-      });
-    }
+    Member.find({_id: req.params.memberId}, function(err, members){
+      if (err) throw err;
+      return res.json(members);
+    });
   }
 
 });
@@ -140,7 +136,14 @@ apiRoutes.get('/member/:memberId/view', function(req, res) {
 //Edit Member
 apiRoutes.patch('/member/:memberId', function(req, res) {
 
-  res.send('To be implemented');
+  if (!mongoose.Types.ObjectId.isValid(req.params.memberId)){
+    return res.json({ success: false, message: 'Update member failed. The id provided is an invalid ObjectId.' });
+  } else {
+      Member.update({_id: req.params.memberId}, req.body, function(err, result){
+        if (err) throw err;
+        return res.json(result);
+      });
+  }
 
 });
 
