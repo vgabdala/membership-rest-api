@@ -150,7 +150,14 @@ apiRoutes.patch('/member/:memberId', function(req, res) {
 //Delete Member
 apiRoutes.delete('/member/:memberId', function(req, res) {
 
-  res.send('To be implemented');
+  if (!mongoose.Types.ObjectId.isValid(req.params.memberId)){
+    return res.json({ success: false, message: 'Delete member failed. The id provided is an invalid ObjectId.' });
+  } else {
+      Member.remove({_id: req.params.memberId}, function(err, result){
+        if (err) throw err;
+        return res.json(result);
+      });
+  }
 
 });
 
