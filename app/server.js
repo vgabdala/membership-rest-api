@@ -6,8 +6,8 @@ var app         = express();
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
-
-var config = require('./config'); // get our config file
+var config      = require('./config'); // get our config file
+var Member      = require('./models/member');
 
 // =======================
 // configuration =========
@@ -52,36 +52,100 @@ var apiRoutes = express.Router();
   // Call login-rest-api to validate token
 //});
 
+function validateRequest(req, res){
+
+  if(req.body.firstName == null){
+    res.json({ success: false, message: 'Create member failed. firstName must be provided.' });
+    return false;
+  } 
+
+  if(req.body.lastName == null){
+    res.json({ success: false, message: 'Create member failed. lastName must be provided.' });
+    return false;
+  } 
+
+  if(req.body.email == null){
+    res.json({ success: false, message: 'Create member failed. email must be provided.' });
+    return false;
+  }
+
+  if(req.body.dob == null){
+    res.json({ success: false, message: 'Create member failed. Date of birth (dob) must be provided.' });
+    return false;
+  } 
+
+  if(req.body.createdByUserId == null){
+    res.json({ success: false, message: 'Create member failed. createdByUserId must be provided.' });
+    return false;
+  }
+
+  return true;
+}
+
 // API ROUTES -------------------
 
 // List Members
-apiRoutes.get('/members', function(req, res) {
-  res.send('To be implemented');
+apiRoutes.get('/member', function(req, res) {
+  Member.find(function(err, members){
+    if (err) throw err;
+    res.json(members);
+  });
 });
 
 //Create Member
-apiRoutes.post('/member/create', function(req, res) {
+apiRoutes.post('/member', function(req, res) {
 
-  res.send('To be implemented');
+  if(validateRequest(req, res)){
+      var newMember = new Member({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        dob: req.body.dob,
+        email: req.body.email,
+        createdByUserId: req.body.createdByUserId
+      });
+
+      newMember.save(function(err){
+        if(err){
+          if(err.code == 11000){
+            res.json({ success: false, message: 'Create member failed. Email address already exists.' });
+          } else { 
+            throw err;
+          }
+        } else {
+          res.json({ success: true, message: 'Member created successfully.' });
+        }
+      });
+  }
 
 });
 
 //View Member
 apiRoutes.get('/member/:memberId/view', function(req, res) {
 
-  res.send('To be implemented');
+  if (req.params.memberId == null) {
+    return res.json({ success: false, message: 'View member failed. Cannot retrieve a member without an id.' });
+  } else if (!mongoose.Types.ObjectId.isValid(req.params.memberId)){
+    return res.json({ success: false, message: 'View member failed. The id provided is an invalid ObjectId.' });
+  } else {
+    if(mongoose.Types.ObjectId.isValid(req.params.memberId)){
+      Member.find({_id: req.params.memberId}, function(err, members){
+        if (err) throw err;
+        return res.json(members);
+      });
+    }
+  }
 
 });
 
 //Edit Member
-apiRoutes.post('/member/:memberId/edit', function(req, res) {
+apiRoutes.patch('/member/:memberId', function(req, res) {
 
   res.send('To be implemented');
 
 });
 
 //Delete Member
-apiRoutes.post('/member/:memberId/delete', function(req, res) {
+apiRoutes.delete('/member/:memberId', function(req, res) {
 
   res.send('To be implemented');
 
