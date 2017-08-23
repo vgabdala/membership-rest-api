@@ -1,26 +1,19 @@
 // Dependencies
 var express     = require('express');
-var app         = express();
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
 var config      = require('./config');
 var apiRoutes   = require('./routes/routes');
 
+const app = express();
+
 // Configuration
 var env = app.get('env');
 var secret = config.mongo.default.secret;
 var dbPort = config.mongo.default.port;
-var dbHost;
-var dbName;
-
-if(env == 'production'){
-	dbHost = config.mongo.production.host;
-	dbName = config.mongo.production.db;
-} else {
-	dbHost = config.mongo.development.host;
-	dbName = config.mongo.development.db;
-}
+var dbHost = (env == 'production') ? config.mongo.production.host : config.mongo.development.host;
+var dbName = (env == 'production') ? config.mongo.production.db : config.mongo.development.db;
 
 // Database connection
 mongoose.connect('mongodb://'+dbHost+':'+dbPort+'/'+dbName, { useMongoClient: true });
