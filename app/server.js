@@ -8,12 +8,13 @@ var config      = require('./config');
 var apiRoutes   = require('./routes/routes');
 
 // Configuration
+var env = app.get('env');
 var secret = config.mongo.default.secret;
 var dbPort = config.mongo.default.port;
 var dbHost;
 var dbName;
 
-if(app.get('env') == 'production'){
+if(env == 'production'){
 	dbHost = config.mongo.production.host;
 	dbName = config.mongo.production.db;
 } else {
@@ -21,26 +22,23 @@ if(app.get('env') == 'production'){
 	dbName = config.mongo.development.db;
 }
 
-mongoose.connect('mongodb://'+dbHost+':'+dbPort+'/'+dbName, { useMongoClient: true }); // connect to database	
-app.set('superSecret', config.mongo.default.secret); // secret variable
+// Database connection
+mongoose.connect('mongodb://'+dbHost+':'+dbPort+'/'+dbName, { useMongoClient: true });
+app.set('superSecret', config.mongo.default.secret); 
 
-// use body parser to get info from POST and/or URL parameters
+// Enable parameter parsing through POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// use morgan to log requests to the console
+// Enable logging of requests
 app.use(morgan('dev'));
 
+// Start server
 var port = process.env.NODE_PORT || 8080; 
 app.get('/', function(req, res) {
     res.send('Hello! The API is at port ' + port + ' /api');
 });
 
-// apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);
-
-// =======================
-// start the server ======
-// =======================
 app.listen(port);
-console.log('membership-rest-api is running on ' + app.get('env') + ' environment on port ' + port);
+console.log('membership-rest-api is running on ' + env + ' environment on port ' + port);
