@@ -1,7 +1,7 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+import mongoose from 'mongoose'
+const Schema = mongoose.Schema
 
-module.exports = mongoose.model('Member', new Schema({ 
+export default mongoose.model('Member', new Schema({ 
   firstName: {
     type: String,
     default: '',
@@ -31,4 +31,4 @@ module.exports = mongoose.model('Member', new Schema({
     type: String,
     required: 'Please fill the id of the user who is creating this member'
   }
-}));
+}))
