@@ -1,6 +1,5 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import Member from '../models/member'
 import {createMember, viewMember, updateMember, deleteMember, listMembers} from '../controller/controller'
 
 const routes   = express.Router() 

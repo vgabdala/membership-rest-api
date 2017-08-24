@@ -15,7 +15,7 @@ var dbHost = (env == 'production') ? config.mongo.production.host : config.mongo
 var dbName = (env == 'production') ? config.mongo.production.db : config.mongo.development.db
 
 // Database connection
-mongoose.connect('mongodb://'+dbHost+':'+dbPort+'/'+dbName, { useMongoClient: true })
+mongoose.connect(`mongodb://${dbHost}:${dbPort}/${dbName}`, { useMongoClient: true })
 app.set('superSecret', config.mongo.default.secret)
 
 // Enable parameter parsing through POST and/or URL parameters
@@ -26,11 +26,13 @@ app.use(bodyParser.json())
 app.use(morgan('dev'))
 
 // Start server
-var port = process.env.NODE_PORT || 8080
 app.get('/', function(req, res) {
-    res.send('Hello! The API is at port ' + port + ' /api')
+    res.send(`The API is available on '/api'`)
 });
 
 app.use('/api', routes)
+
+const port = process.env.NODE_PORT || 8080
 app.listen(port)
-console.log('membership-rest-api is running on ' + env + ' environment on port ' + port)
+
+console.log(`membership-rest-api is running on ${env} environment on port ${port}`)

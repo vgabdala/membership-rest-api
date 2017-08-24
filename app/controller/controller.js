@@ -12,7 +12,7 @@ export function createMember(req, res){
         createdByUserId: req.body.createdByUserId
       });
 
-      newMember.save(function(err){
+      newMember.save((err) => {
         if(err){
           if(err.code == 11000){
             res.json({ success: false, message: 'Create member failed. Email address already exists.' });
@@ -27,7 +27,7 @@ export function createMember(req, res){
 }
 
 export function listMembers(req, res){
-	Member.find(function(err, members){
+	Member.find((err, members) => {
     if (err) throw err;
     res.json(members);
   });
@@ -36,7 +36,7 @@ export function listMembers(req, res){
 export function viewMember(req, res){
 	if (mongoose.Types.ObjectId.isValid(req.params.memberId)){
     
-    Member.find({_id: req.params.memberId}, function(err, members){
+    Member.find({_id: req.params.memberId}, (err, members) => {
       if (err) throw err;
       return res.json(members);
     });
@@ -49,7 +49,7 @@ export function viewMember(req, res){
 export function updateMember(req, res){
 	if (mongoose.Types.ObjectId.isValid(req.params.memberId)){
     
-    Member.update({_id: req.params.memberId}, req.body, function(err, result){
+    Member.update({_id: req.params.memberId}, req.body, (err, result) => {
       if (err) throw err;
       return res.json(result);
     });
@@ -62,7 +62,7 @@ export function updateMember(req, res){
 export function deleteMember(req, res){
 	if (mongoose.Types.ObjectId.isValid(req.params.memberId)){
     
-    Member.remove({_id: req.params.memberId}, function(err, result){
+    Member.remove({_id: req.params.memberId}, (err, result) => {
       if (err) throw err;
       return res.json(result);
     });
