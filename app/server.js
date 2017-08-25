@@ -16,7 +16,7 @@ var dbName = (env == 'production') ? config.mongo.production.db : config.mongo.d
 
 // Database connection
 mongoose.connect(`mongodb://${dbHost}:${dbPort}/${dbName}`, { useMongoClient: true })
-app.set('superSecret', config.mongo.default.secret)
+app.set('superSecret', process.env.MONGO_SECRET)
 
 // Enable parameter parsing through POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }))

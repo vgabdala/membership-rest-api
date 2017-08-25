@@ -2,7 +2,6 @@ export default {
 
     mongo: {
      	default: {
-    		secret: 'vinnieabdala',
     		port: 27017
     	},
     	development: {
